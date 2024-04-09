@@ -15,7 +15,7 @@ export class BaseDTO implements BaseDTO {
   id: string;
 
   @Expose({ name: 'isRegistered' })
-  @IsBoolean()
+  @IsBoolean({ message: 'isRegistered must be a boolean' })
   is_registered?: boolean;
 
   @Expose({ name: 'isDeleted' })
