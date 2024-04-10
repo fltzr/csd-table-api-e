@@ -1,24 +1,24 @@
 import 'reflect-metadata';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
-import { BaseDTO } from './base-dto';
+import { camelCase } from 'lodash-es';
+import { AllOperations, BaseDTO, ExcludeRead, OnlyCreate } from './base-dto';
 
-export interface TestDTO {
+export interface ITestDTO {
   name?: string;
   amount?: number;
   is_valid_amount?: boolean;
 }
 
-export class UpdateTestDTO extends BaseDTO implements TestDTO {
-  @Expose()
-  @IsString()
+export class TestDTO extends BaseDTO implements ITestDTO {
+  @Expose({ name: 'name', groups: AllOperations })
   name?: string;
 
-  @Expose()
+  @Expose({ name: 'amount', groups: OnlyCreate })
   @IsNumber()
   amount?: number;
-  
-  @Expose({ name: 'isValidAmount' })
+
+  @Expose({ name: 'isValidAmount', groups: ExcludeRead })
   @IsBoolean()
   is_valid_amount?: boolean;
 }

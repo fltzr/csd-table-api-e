@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { Expose } from 'class-transformer';
-import { IsOptional, IsUUID, IsString, IsBoolean, IsDate } from 'class-validator';
+import { Expose, Transform } from 'class-transformer';
+import { IsUUID, IsBoolean, IsDateString } from 'class-validator';
 
 export interface BaseDTO {
   id: string;
@@ -23,6 +23,10 @@ export class BaseDTO implements BaseDTO {
   is_deleted?: boolean;
 
   @Expose({ name: 'updatedAt' })
-  @IsDate()
+  @IsDateString()
   updated_at: Date;
+
+  @Expose({ name: 'createdAt' })
+  @IsDateString()
+  created_at: Date;
 }
