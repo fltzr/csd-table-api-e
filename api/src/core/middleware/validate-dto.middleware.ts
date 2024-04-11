@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { camelCase } from 'lodash-es';
 import { plainToInstance } from 'class-transformer';
 import {
   type ValidatorOptions,
@@ -24,7 +23,7 @@ export const validateDto =
       groups,
       // strictGroups: true,
       skipMissingProperties: true,
-      ''
+      forbidUnknownValues: false,
       // skipNullProperties: true,
       // skipUndefinedProperties: true,
       validationError: {
