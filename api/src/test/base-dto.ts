@@ -1,20 +1,7 @@
 import 'reflect-metadata';
 import { Expose, Transform } from 'class-transformer';
-import {
-  IsString,
-  IsUUID,
-  IsBoolean,
-  IsDateString,
-  ValidateIf,
-} from 'class-validator';
+import { IsString, IsUUID, IsBoolean, IsDateString } from 'class-validator';
 import type { UUID } from 'crypto';
-import {
-  ALL_OPERATIONS,
-  EXCLUDE_CREATE,
-  EXCLUDE_READ,
-  ONLY_READ,
-  ONLY_UPDATE,
-} from './dto-groups';
 
 export interface DatabaseAttributes {
   id: string;
@@ -29,30 +16,51 @@ export interface DatabaseAttributes {
 }
 
 export class BaseDTO {
-  @ValidateIf((o) => !o.id, { groups: ONLY_UPDATE })
-  @IsString({ groups: EXCLUDE_READ })
-  @Expose({ groups: EXCLUDE_CREATE, toClassOnly: true })
-  @IsUUID('4', { groups: EXCLUDE_CREATE })
+  @Expose({ toClassOnly: true })
+  @IsString()
   uuid: UUID;
 
-  @Expose({ name: 'isRegistered', groups: ALL_OPERATIONS })
+  @Expose({ name: 'isRegistered' })
   @IsBoolean({ message: 'isRegistered must be a boolean' })
+  @Transform(({ value }) => value === 1 || value === true)
   is_registered?: boolean;
 
-  @Expose({ name: 'isDeleted', groups: ONLY_READ })
+  @Expose({ name: 'isDeleted' })
   @IsBoolean()
+  @Transform(({ value }) => value === 1 || value === true)
   is_deleted?: boolean;
 
-  @Expose({ name: 'updatedAt', groups: ONLY_UPDATE })
+  @Expose({ name: 'updatedAt' })
   @IsDateString()
+  @Transform(({ value }) => value, { toClassOnly: true })
   updated_at: Date;
+
+  @Expose({ name: 'updatedBy' })
+  @IsString()
+  @Transform(({ value }) => value, { toClassOnly: true })
+  updated_by: string;
+
+  @Expose({ name: 'createdBy' })
+  @IsString()
+  @Transform(({ value }) => value, { toClassOnly: true })
+  created_by: string;
 
   @Expose({ name: 'createdAt' })
   @IsDateString()
+  @Transform(({ value }) => value, { toClassOnly: true })
   created_at: Date;
 }
 
 /**
+2024-04-11 23:01:52 info: raw database object: {
+  "uuid": "123e4567-e89b-12d3-a456-426614174000",
+  "name": "Joshi",
+  "is_registered": true,
+  "is_deleted": false,
+  "is_valid_amount": true,
+  "updated_at": "2024-04-12T03:01:51.387Z",
+  "updated_by": "Josh",
+  "
  import { IsNotEmpty, IsOptional, IsString, IsUUID, ValidateIf, IsDate } from 'class-validator';
 import { Expose, Transform, Type } from 'class-transformer';
 

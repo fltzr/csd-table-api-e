@@ -4,7 +4,7 @@ import { plainToInstance, instanceToPlain } from 'class-transformer';
 
 import { logger } from '../core/utils/winston-logger';
 
-import { TestDTO } from './dto';
+import { TestDTO, TransactionDto } from './dto';
 import { validateDto } from '../core/middleware/validate-dto.middleware';
 
 const validatorOptions: ValidatorOptions = {
@@ -16,12 +16,21 @@ const validatorOptions: ValidatorOptions = {
 };
 
 const rawObject = {
-  uuid: '123e4567-e89b-12d3-a456-426614174000',
-  name: 123,
+  id: '123123',
+  name: 'Joshi',
   isRegistered: 'Hehe',
   isDeleted: false,
   isValidAmount: true,
   updatedAt: new Date(),
+};
+
+const databaseObject: InstanceType<typeof TransactionDto> = {
+  id: '123123',
+  name: 'Joshi',
+  total_amount: 123,
+  is_registered: true,
+  is_deleted: false,
+  is_valid_amount: true,
 };
 
 export const exampleRouter = Router();
@@ -83,15 +92,23 @@ exampleRouter
     res.json({ message: 'Hello, World.. again!' });
   })
 
-  .get(
-    '/read-operation',
-    validateDto(TestDTO),
-    async (request: Request, response: Response) => {
-      logger.info(`request.body: ${JSON.stringify(request.body)}`);
+  .get('/read-operation', async (request: Request, response: Response) => {
+    logger.info(
+      `raw database object: ${JSON.stringify(databaseObject, null, 2)}`,
+    );
 
-      return response.status(200).json('Hello!');
-    },
-  )
+    const dtoInstance = plainToInstance(TransactionDto, databaseObject);
+
+    logger.info(`dtoInstance: ${JSON.stringify(dtoInstance, null, 2)}`);
+
+    const clientObject = instanceToPlain(dtoInstance, {
+      strategy: 'exposeAll',
+    });
+
+    logger.info(`clientObject: ${JSON.stringify(clientObject, null, 2)}`);
+
+    return response.status(200).json('Hello!');
+  })
 
   .get('/write-operation', async (request: Request, response: Response) => {})
 
