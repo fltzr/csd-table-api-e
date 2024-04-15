@@ -1,9 +1,11 @@
+import { ZodIssue } from 'zod';
+
 export class HttpException extends Error {
   public status: number;
   public override message: string;
-  public errors?: Record<string, string[]>;
+  public errors?: ZodIssue[];
 
-  constructor(status: number, message: string, errors?: Record<string, string[]>) {
+  constructor(status: number, message: string, errors?: string[]) {
     super(message);
 
     if (Error.captureStackTrace) {
@@ -12,6 +14,6 @@ export class HttpException extends Error {
 
     this.status = status;
     this.message = message;
-    this.errors = errors;
+    this.errors = errors as any;
   }
 }
